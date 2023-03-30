@@ -100,33 +100,75 @@
 
 ### 5.1. MD5算法
 
-> MD5 用的是 哈希函数，它的典型应用是对一段信息产生 信息摘要，以 防止被篡改。严格来说，MD5 不是一种 加密算法 而是 摘要算法。无论是多长的输入，MD5 都会输出长度为 128bits 的一个串 (通常用 16 进制 表示为 32 个字符)。
+> MD5 用的是 哈希函数，它的典型应用是对一段信息产生 信息摘要，以 防止被篡改。严格来说，MD5 不是一种 加密算法 而是 摘要算法。
+> 无论是多长的输入，MD5 都会输出长度为 128bits 的一个散列值串 (通常表示为32位的16进制数)。
 
 Java使用案例：
 
 ```text
-public static final byte[] computeMD5(byte[] content) {try {MessageDigest md5 = MessageDigest.getInstance("MD5");return md5.digest(content);} catch (NoSuchAlgorithmException e) {throw new RuntimeException(e);}
+public static final byte[] computeMD5(byte[] content) {
+    try {
+        MessageDigest md5 = MessageDigest.getInstance("MD5");
+        return md5.digest(content);
+    } catch (NoSuchAlgorithmException e) {
+        throw new RuntimeException(e);
+    }
 }
 ```
 
+参考测试代码
+
+
+[MessageDigest是什么？](https://blog.csdn.net/qq_41918166/article/details/115552035)
+
+
 ### 5.2. SHA1算法
 
-> SHA1 是和 MD5 一样流行的 消息摘要算法，然而 SHA1 比 MD5 的 安全性更强。对于长度小于 2 ^ 64 位的消息，SHA1 会产生一个 160 位的 消息摘要。基于 MD5、SHA1 的信息摘要特性以及 不可逆 (一般而言)，可以被应用在检查 文件完整性 以及 数字签名 等场景。
+> SHA1 是和 MD5 一样流行的 消息摘要算法，然而 SHA1 比 MD5 的 安全性更强。
+> 对于长度小于 2 ^ 64 位的消息，SHA1 会产生一个 160 位的 消息摘要,表示为40位的十六进制数。
+> 基于 MD5、SHA1 的信息摘要特性以及 不可逆 (一般而言)，可以被应用在检查 文件完整性 以及 数字签名 等场景。
 
 Java使用案例：
 
 ```text
-public static byte[] computeSHA1(byte[] content) {try {MessageDigest sha1 = MessageDigest.getInstance("SHA1");return sha1.digest(content);} catch (NoSuchAlgorithmException e) {throw new RuntimeException(e);}
+public static byte[] computeSHA1(byte[] content) {
+    try {
+        MessageDigest sha1 = MessageDigest.getInstance("SHA1");
+        return sha1.digest(content);
+    } catch (NoSuchAlgorithmException e) {
+        throw new RuntimeException(e);
+    }
 }
 ```
 
 ### 5.3. HMAC算法
 
-> MAC 是密钥相关的 哈希运算消息认证码（Hash-based Message Authentication Code），HMAC 运算利用 哈希算法 (MD5、SHA1 等)，以 一个密钥 和 一个消息 为输入，生成一个 消息摘要 作为 输出。HMAC 发送方 和 接收方 都有的 key 进行计算，而没有这把 key 的第三方，则是 无法计算 出正确的 散列值的，这样就可以 防止数据被篡改。
+> MAC 是密钥相关的 哈希运算消息认证码（Hash-based Message Authentication Code）
+> HMAC 运算利用 哈希算法 (MD5、SHA1 等)，以 一个密钥 和 一个消息 为输入，生成一个 消息摘要 作为 输出。
+> HMAC 发送方 和 接收方 都有的 key 进行计算，而没有这把 key 的第三方，则是 无法计算 出正确的 散列值的，这样就可以 防止数据被篡改。
 
+**MAC公式：MAC算法+密钥+要加密的信息=密文**
+
+HMAC 是Keyed-Hashing for Message Authentication的缩写。
+HMAC的MAC算法是hash算法，它可以是MD5, SHA-1或者 SHA-256，他们分别被称为HMAC-MD5，HMAC-SHA1， HMAC-SHA256。
+
+HMAC用公式表示：
+
+H(K XOR opad, H(K XOR ipad, text))
+
+其中： 
+> H：hash算法，比如（MD5，SHA-1，SHA-256） 
+> B：块字节的长度，块是hash操作的基本单位。这里B=64。 
+> L：hash算法计算出来的字节长度。(L=16 for MD5, L=20 for SHA-1)。 
+> K：共享密钥，K的长度可以是任意的，但是为了安全考虑，还是推荐K的长度>B。当K长度大于B时候，会先在K上面执行hash算法，将得到的L长度结果作为新的共享密钥。 如果K的长度<B, 那么会在K后面填充0x00一直到等于长度B。 
+> text： 要加密的内容 opad：外部填充常量，是 0x5C 重复B次。 
+> ipad： 内部填充常量，是0x36 重复B次。 
+> XOR： 异或运算。
 
 
 **注意**：HMAC 算法实例在 多线程环境 下是 不安全的。但是需要在 多线程访问 时，进行同步的辅助类，使用 ThreadLocal 为 每个线程缓存 一个实例可以避免进行锁操作。
+
+参考测试代码
 
 ### 5.4. AES算法
 
@@ -137,6 +179,7 @@ DES 加密算法是一种 分组密码，以 64 位为 分组对数据 加密，
 > AES 加密算法是密码学中的 高级加密标准，该加密算法采用 对称分组密码体制，密钥长度的最少支持为 128 位、 192 位、256 位，分组长度 128 位，算法应易于各种硬件和软件实现。这种加密算法是美国联邦政府采用的 区块加密标准。AES 本身就是为了取代 DES 的，AES 具有更好的 安全性、效率 和 灵活性。
 >
 
+**AES加密解密见代码**
 
 
 ### 5.5. RSA算法
@@ -145,9 +188,21 @@ DES 加密算法是一种 分组密码，以 64 位为 分组对数据 加密，
 
 RSA 加密算法 基于一个十分简单的数论事实：**将两个大 素数 相乘十分容易，但想要对其乘积进行 因式分解 却极其困难，因此可以将 乘积 公开作为 加密密钥**。
 
+**RSA加密解密例子见代码**
 
 
-## 加密解密相关知识脑图
+## 6. 数字签名
+
+数字签名技术是基于非对称加密技术之上的，
+
+数字签名特点:
+
+  * 防篡改：数据不会被修改。
+  * 防抵赖：消息签署者不能抵赖。
+  * 防伪造：发送的消息不能够伪造。
+
+
+## 7. 加密解密相关知识脑图
 
 
 
