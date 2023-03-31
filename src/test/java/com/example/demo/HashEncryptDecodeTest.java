@@ -50,7 +50,7 @@ public class HashEncryptDecodeTest {
      * @param bytes
      * @return str16
      * @since: 2023/3/30 19:35
-     * @summary: 将散列值串转成16进制字符
+     * @summary: 将散列值串转成16进制数字符表示
      */
     private static String hashListTo16Str(byte[] bytes) {
         StringBuffer stringBuffer = new StringBuffer();

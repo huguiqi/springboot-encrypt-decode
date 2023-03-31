@@ -1,5 +1,6 @@
 package com.example.demo.todo;
 
+import net.jcip.annotations.NotThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +20,7 @@ import java.util.Arrays;
  * @summary: HMAC 算法实例在 多线程环境 下是 不安全的。但是需要在 多线程访问 时，
  * 进行同步的辅助类，使用 ThreadLocal 为 每个线程缓存 一个实例可以避免进行锁操作。
  */
-//@NotThreadSafe
+@NotThreadSafe
 public class HMacHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(HMacHelper.class);
