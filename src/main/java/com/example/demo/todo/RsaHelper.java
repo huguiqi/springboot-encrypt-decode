@@ -29,6 +29,7 @@ public class RsaHelper {
     private RSAPublicKey publicKey;
     private RSAPrivateCrtKey privateKey;
 
+
     public RsaHelper(String publicKey, String privateKey) {
         this(Base64Utils.decode(publicKey.getBytes(StandardCharsets.UTF_8)), Base64Utils.decode(privateKey.getBytes(StandardCharsets.UTF_8)));
     }
@@ -72,6 +73,7 @@ public class RsaHelper {
         try {
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            //将公钥key从bit转成字节，进行长度计算，去除padding时默认占用的11个字节
             int size = publicKey.getModulus().bitLength() / 8 - 11;
             ByteArrayOutputStream baos = new ByteArrayOutputStream((content.length + size - 1) / size * (size + 11));
             int left = 0;
