@@ -2,6 +2,7 @@ package com.example.demo;
 
 import com.example.demo.common.utils.RsaUtil;
 import com.example.demo.todo.RsaHelper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.Base64Utils;
 
@@ -43,17 +44,19 @@ public class PublicSecretEncryptTest {
         System.out.println("明文：" + content);
         System.out.println("明文大小：" + data.length);
 
+        byte [] signBuf = rsaHelper.sign(data);
+
         //公钥加密
         byte[] encodeBuf = rsaHelper.encrypt(data);
         System.out.println("密文：" + Base64Utils.encode(encodeBuf));
         System.out.println("密文大小：" + encodeBuf.length);
 
-        byte [] signBuf = rsaHelper.sign(data);
 
         //私钥解密
         byte[] decodeBuf = rsaHelper.decrypt(encodeBuf);
 
-        rsaHelper.verify(signBuf,decodeBuf);
+        Assertions.assertTrue(rsaHelper.verify(signBuf,decodeBuf));
+        Assertions.assertFalse(rsaHelper.verify(signBuf,"123456".getBytes(StandardCharsets.UTF_8)));
 
         System.out.println("解密后文字：" + new String(decodeBuf, StandardCharsets.UTF_8));
 
