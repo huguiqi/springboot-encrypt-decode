@@ -48,7 +48,7 @@ public class PublicSecretEncryptTest {
 
         //公钥加密
         byte[] encodeBuf = rsaHelper.encrypt(data);
-        System.out.println("密文：" + Base64Utils.encode(encodeBuf));
+        System.out.println("密文：" + Base64Utils.encodeToString(encodeBuf));
         System.out.println("密文大小：" + encodeBuf.length);
 
 
@@ -61,6 +61,8 @@ public class PublicSecretEncryptTest {
         System.out.println("解密后文字：" + new String(decodeBuf, StandardCharsets.UTF_8));
 
     }
+
+
 
 
 
