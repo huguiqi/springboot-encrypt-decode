@@ -46,7 +46,10 @@ public class PrivateSecretEncryptTest {
 
     @Test
     public void testAesEncrypt(){
-        AesHelper aesHelper = new AesHelper(SECRET_KEY.getBytes(StandardCharsets.UTF_8), Md5Util.compute(SECRET_KEY.getBytes(StandardCharsets.UTF_8)));
+
+        //这个地方有点不太明白，偏移量如果输入字符串，然后转成字节数组，则会报销，说长度不符合要求，必须16位
+        //而当把同样的偏移量输入转成md5串以后，就可以加密，不报错
+        AesHelper aesHelper = new AesHelper(SECRET_KEY.getBytes(StandardCharsets.UTF_8), Md5Util.compute((SECRET_KEY+"").getBytes(StandardCharsets.UTF_8)));
         String content = "123456";
         byte[] contentBytes = content.getBytes(StandardCharsets.UTF_8);
         byte [] bytes = aesHelper.encrypt(contentBytes);
